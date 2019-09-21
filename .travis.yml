@@ -1,0 +1,9 @@
+language: php
+
+sudo: false
+
+services:
+  - docker
+
+script:
+- docker-compose up --build test
