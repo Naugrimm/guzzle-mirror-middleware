@@ -15,38 +15,6 @@ class GuzzleMirrorMiddlewareTest extends TestCase
     /**
      * @test
      */
-    public function testFactory()
-    {
-        $container = [];
-        $history = Middleware::history($container);
-
-        $mock = new MockHandler([
-            new Response(200, ['X-Mirror' => false]),
-            new Response(200, ['X-Mirror' => false]),
-            new Response(200, ['X-Mirror' => false]),
-            new Response(200, ['X-Mirror' => false]),
-        ]);
-        $mirrorsStack = HandlerStack::create($mock);
-        $mirrorsStack->push($history);
-        $stack = HandlerStack::create($mock);
-        $mirror = GuzzleMirrorMiddleware::factory([
-            'mirrors' => [
-                ['client' => new Client(['base_uri' => 'http://mirror1.com/', 'handler' => $mirrorsStack])],
-                ['client' => new Client(['base_uri' => 'http://mirror2.com/', 'handler' => $mirrorsStack])],
-                ['client' => new Client(['base_uri' => 'http://mirror3.com/', 'handler' => $mirrorsStack])]
-            ],
-        ]);
-
-        $stack->push($history);
-        $stack->push($mirror);
-        $client = new Client(['handler' => $stack]);
-
-        $client->request('GET', 'http://example.com/');
-        $this->assertEquals(4, count($container));
-    }
-    /**
-     * @test
-     */
     public function sendRequestsToAllMirrors()
     {
         $container = [];
