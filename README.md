@@ -25,10 +25,22 @@ Setup Mirror Clients:
 ```php
 $mirrorsMiddleware = new \GuzzleMirror\GuzzleMirrorMiddleware([
     'mirrors' => [
-        ['client' => new \GuzzleHttp\Client(['base_uri' => 'http://mirror1.com/'])],
-        ['client' => new \GuzzleHttp\Client(['base_uri' => 'http://mirror2.com/'])],
-        ['client' => new \GuzzleHttp\Client(['base_uri' => 'http://mirror3.com/'])]
-    ]
+        [
+            'client' => new \GuzzleHttp\Client(['base_uri' => 'http://mirror1.com/']),
+            'ignore_mirror_failures'    => false, // default=false -- failures will be sent on ignored_failures_callback, on true MirrorFailedException is thrown
+            'ignore_mirror_methods'     => ['GET'] // default=[] -- all the methods you'd like to ignore for this mirror
+        ],
+        [
+            'client' => new \GuzzleHttp\Client(['base_uri' => 'http://mirror2.com/'])
+        ],
+        [
+            'client' => new \GuzzleHttp\Client(['base_uri' => 'http://mirror3.com/'])
+        ]
+    ],
+    'mirrors_concurrency'       => 4,  // default=4 -- send to 4 mirrors at a time
+    'no_mirror_on_failure'      => true, // default=true -- if there's a failure in main request don't send to mirrors
+    'mirror_responses'          => function(array $responses) {}, // default=null -- all mirror responses
+    'ignored_failures_callback' => function(array $failures) {}, // default=null -- when ignoring failures no MirrorFailedException is thrown but you can get failures here
 ])
 ```
 
