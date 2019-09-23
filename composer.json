@@ -9,7 +9,7 @@
     "issues": "https://github.com/hasnat/guzzle-mirror-middleware/issues"
   },
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.0",
     "guzzlehttp/promises": "^1.3",
     "guzzlehttp/guzzle": "^6.3"
   },
