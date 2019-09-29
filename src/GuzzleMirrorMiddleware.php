@@ -86,7 +86,23 @@ class GuzzleMirrorMiddleware
                     /** @var \GuzzleHttp\Client $client */
                     $ignoreFailures = $mirror['ignore_mirror_failures'] || $ignoreFailures;
                     $client = $mirror['client'];
-                    yield $client->sendAsync($request);
+
+                    $uri = $request->getUri();
+                    $clientBaseUri = $client->getConfig('base_uri');
+                    if ($clientBaseUri != null) {
+                        foreach (['Scheme', 'Host', 'Port'] as $componentMethod) {
+                            $componentGet = 'get' . $componentMethod;
+                            $componentSet = 'with' . $componentMethod;
+                            $uri = $uri->{$componentSet}($clientBaseUri->{$componentGet}());
+                        }
+                        $userInfo = $clientBaseUri->getUserInfo();
+                        if ($userInfo != null) {
+                            $userPass = explode(':', $userInfo);
+                            $uri = $uri->withUserInfo($userPass[0], isset($userPass[1]) ? $userPass[1] : null);
+                        }
+                    }
+
+                    yield $client->sendAsync($request->withUri($uri));
                 };
             };
             $failures = [];
