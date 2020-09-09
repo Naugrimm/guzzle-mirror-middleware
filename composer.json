@@ -32,7 +32,7 @@
       "@test"
     ],
     "test": [
-      "./vendor/bin/phpcs ./src/ || true",
+      "./vendor/bin/phpcs --standard=PSR1,PSR2 ./src/ || true",
       "phpunit --coverage-text"
     ]
   }

@@ -112,8 +112,6 @@ class GuzzleMirrorMiddlewareTest extends TestCase
         $stack->push($mirror);
         $client = new Client(['handler' => $stack]);
 
-        $hadException = false;
-
         $client->request('GET', 'http://example.com/')->getStatusCode();
         $this->assertEquals(3, count($container));
     }
@@ -147,8 +145,6 @@ class GuzzleMirrorMiddlewareTest extends TestCase
         $stack->push($history);
         $stack->push($mirror);
         $client = new Client(['handler' => $stack]);
-
-        $hadException = false;
 
         $client->request('GET', 'http://example.com/')->getStatusCode();
         $this->assertEquals(1, count($container));

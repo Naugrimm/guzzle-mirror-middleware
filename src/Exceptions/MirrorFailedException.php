@@ -2,30 +2,40 @@
 
 namespace GuzzleMirror\Exceptions;
 
+use Psr\Http\Message\ResponseInterface;
+
 class MirrorFailedException extends \Exception
 {
-    /**
-     * @var array
-     */
-    public $reasons;
-    public $mainResponse;
+    public array $reasons;
+    public ResponseInterface $mainResponse;
 
     /**
      * MirrorFailed constructor.
-     * @param $response
-     * @param array $reasons
+     *
+     * @param ResponseInterface $response The original response
+     * @param array             $reasons  The reasons why the mirrored
+     *                                    requests failed
      */
-    public function __construct($response, $reasons = [])
+    public function __construct(ResponseInterface $response, array $reasons = [])
     {
         $this->mainResponse = $response;
         $this->reasons = $reasons;
-        parent::__construct(print_r(array_map(
-            function($reason) {return $reason->getMessage();},
-            $reasons
-        )), true);
+        parent::__construct(
+            print_r(
+                array_map(
+                    function ($reason) {
+                        return $reason->getMessage();
+                    },
+                    $reasons
+                )
+            ),
+            true
+        );
     }
 
     /**
+     * Get the reasons why the mirrored requests failed
+     *
      * @return array
      */
     public function getReasons(): array
@@ -34,11 +44,12 @@ class MirrorFailedException extends \Exception
     }
 
     /**
-     * @return mixed
+     * Get the original response
+     *
+     * @return ResponseInterface
      */
-    public function getMainResponse()
+    public function getMainResponse() : ResponseInterface
     {
         return $this->mainResponse;
     }
-
 }
